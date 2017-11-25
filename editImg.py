@@ -3,14 +3,13 @@ import math
 import os
 
 class EditImg:
-    #キャラ(切り出す画像データの単位)サイズ
-    charSize = 16*3
+    charSize = 0
     #色相分の水増し数(1,2,3,6,12)
     hs = 6
     #背景色(黒)
     back =(0,0,0)
-    def __init__(self):
-        pass
+    def __init__(self,charSize):
+        self.charSize = charSize
     def expCanvas(self,inImg):
         xChar = math.ceil(inImg.size[0]/self.charSize)
         yChar = math.ceil(inImg.size[1]/self.charSize)

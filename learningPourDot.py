@@ -16,7 +16,7 @@ from chainer.training import extensions
 
 quePath ='que'
 ansPath = 'ans'
-charSize = 16*3
+charSize = 16*2
 outUnit = 3*charSize*charSize
 unitSize = round(outUnit*4/3)
 

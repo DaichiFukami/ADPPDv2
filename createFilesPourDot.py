@@ -6,6 +6,7 @@ import shutil
 tdPath = 'traindata'
 quePath ='que'
 ansPath = 'ans'
+charSize = 16*2
 
 def resetDir(path):
     if(os.path.isdir(path)==True):
@@ -20,7 +21,7 @@ listUp = None
 resetDir(quePath)
 resetDir(ansPath)
 
-edit = editImg.EditImg()
+edit = editImg.EditImg(charSize)
 for i in range(0, len(fileList)):
     edit.outImg(quePath,fileList[i][0])
     edit.outImg(ansPath,fileList[i][1])
