@@ -13,10 +13,12 @@ import chainer.functions as F
 import chainer.links as L
 from chainer import training
 from chainer.training import extensions
-from chainer.datasets import tuple_dataset
 
 quePath ='que'
 ansPath = 'ans'
+charSize = 16*3
+outUnit = 3*charSize*charSize
+unitSize = round(outUnit*4/3)
 
 class DatasetPourDot(chainer.dataset.DatasetMixin):
     def __init__(self):
@@ -80,7 +82,7 @@ def main():
                         help='リサルトファイルのフォルダ')
     parser.add_argument('--resume', '-r', default='',
                         help='Resume the training from snapshot')
-    parser.add_argument('--unit', '-u', type=int, default=4092,
+    parser.add_argument('--unit', '-u', type=int, default=unitSize,
                         help='中間層の数')
     args = parser.parse_args()
 
@@ -91,7 +93,7 @@ def main():
     print('')
 
     ##MLPをここで引っ張る
-    model = L.Classifier(ADPPD(args.unit, 3072),lossfun=F.mean_squared_error)#out-10種類(0-9の数字判別のため)
+    model = L.Classifier(ADPPD(args.unit, outUnit),lossfun=F.mean_squared_error)#out-10種類(0-9の数字判別のため)
     model.compute_accuracy = False
     #GPU有無の判別
     if args.gpu >= 0:
