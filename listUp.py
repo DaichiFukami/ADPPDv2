@@ -25,5 +25,7 @@ class ListUp:
             if(quePath != 'null' and ansPath != 'null'):
                 outList.append((quePath,ansPath))
         return outList
+"""
 lu = ListUp('traindata')
+"""
 
