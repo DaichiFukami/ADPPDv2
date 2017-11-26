@@ -5,7 +5,7 @@ import os
 class EditImg:
     charSize = 0
     #色相分の水増し数(1,2,3,6,12)
-    hs = 6
+    hs = 3
     #背景色(黒)
     back =(0,0,0)
     def __init__(self,charSize):
@@ -42,7 +42,7 @@ class EditImg:
         files = os.listdir(outDel)
         for i in files:
             ctr = ctr + 1
-        for j in range(1,self.hs):
+        for j in range(0,self.hs):
             for i in range(0, 8):
                 h, s, v = outImgs[0][i].split()
                 j2 = (255/self.hs)*j
@@ -52,21 +52,22 @@ class EditImg:
                 outImg.save(outDel+'/'+str(ctr)+'.png')
                 ctr = ctr + 1
                 #outImg.save(outDel+'/'+fileName+'_'+str(i)+'_'+str(j)+'_'+str(fileY).zfill(3)+'_'+str(fileX).zfill(3)+'.png')
-    def quarryImg(self,inImg):
+    def quarryImg(self,inImg,moveLength):
+        self.moveLength = int(moveLength)
         xCh = int(inImg.size[0]/self.charSize)*2-1
         yCh = int(inImg.size[1]/self.charSize)*2-1
         outImgs = [[0 for i in range(xCh)] for j in range(yCh)]
         for j in range(0, yCh):
                 for i in range(0, xCh):
-                    xSt = i*int(self.charSize/2)
-                    ySt = j*int(self.charSize/2)
+                    xSt = i*self.moveLength
+                    ySt = j*self.moveLength
                     outImgs[j][i] = inImg.crop((xSt, ySt, (xSt+self.charSize), (ySt+self.charSize)))
         return outImgs
 
     def outImg(self,outDel,path):
         img = Image.open(path).convert("HSV")
         img = self.expCanvas(img)
-        imgsqua = self.quarryImg(img)
+        imgsqua = self.quarryImg(img,int(self.charSize/2))
         for y in range(0, len(imgsqua)):
                 for x in range(0, len(imgsqua[0])):
                     fileNames = os.path.basename(path)
