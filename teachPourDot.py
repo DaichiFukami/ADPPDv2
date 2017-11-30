@@ -1,9 +1,16 @@
 import listUp
 import editImg
 
+from learningPourDot import ADPPD
+from chainer import serializers
+
 inPath = 'indata'
 outPath = 'outdata'
 charSize = 16*2
+
+#modelの設定
+model = ADPPD(4096,3072)
+serializers.load_npz('mymodel.npz', model)
 
 #ファイルのリストアップ
 listUp = listUp.ListUp()
@@ -19,7 +26,7 @@ for i in range(0, len(fileList)):
     for y in range(len(inImgs)):
             for x in range(len(inImgs[0])):
                 numpy = edit.img2numpy(inImgs[y][x])
-                #numpyを破滅的導入で変換
+                #numpy2 = model(numpy)
                 inImgs[y][x] = edit.numpy2img(numpy)
     outImg = edit.sutureImg(inImgs)
     outImg = outImg.convert("RGB")

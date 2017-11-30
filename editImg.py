@@ -55,8 +55,8 @@ class EditImg:
 
     def quarryImg(self,inImg,moveLength):
         self.moveLength = int(moveLength)
-        xCh = int(inImg.size[0]/self.charSize)*int(self.charSize/self.moveLength)-(int(self.charSize/self.moveLength)-1)
-        yCh = int(inImg.size[1]/self.charSize)*int(self.charSize/self.moveLength)-(int(self.charSize/self.moveLength)-1)
+        xCh = int((inImg.size[0]-self.charSize)/self.moveLength+1)
+        yCh = int((inImg.size[1]-self.charSize)/self.moveLength+1)
         outImgs = [[0 for i in range(xCh)] for j in range(yCh)]
         for j in range(0, yCh):
                 for i in range(0, xCh):
@@ -114,7 +114,7 @@ class EditImg:
         imgsQua = self.quarryImg(img,int(self.charSize))
         return imgsQua
 
-"""
+
 edit = EditImg(32)
 img = Image.open('alldata/0000_i.bmp').convert("HSV")
 img = edit.expCanvas(img)
@@ -122,7 +122,7 @@ imgsqua = edit.quarryImg(img,32)
 imgOut = edit.sutureImg(imgsqua)
 imgOut = imgOut.convert("RGB")
 imgOut.save('alldata/sample_out.png')
-"""
+
 
 """
 edit = EditImg(32)
