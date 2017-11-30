@@ -51,7 +51,7 @@ class DatasetPourDot(chainer.dataset.DatasetMixin):
         return queNum,ansNum
 
     def img2numpy(self,Img):
-        imgF = np.asarray(Img, dtype=np.float32)
+        imgF = xp.asarray(Img, dtype=xp.float32)
         numpy = []
         for z in range(0,3):
             for y in range(0,charSize):
@@ -73,9 +73,10 @@ class ADPPD(chainer.Chain):
         h1 = F.relu(self.l1(x))#入力をl1で変換、さらに活性化関数で変換
         h2 = F.relu(self.l2(h1))
         return self.l3(h2)
+
 class ADPPD_CNN(chainer.Chain):
     def __init__(self, n_units, n_out):
-        super(ADPPD, self).__init__()
+        super(ADPPD_CNN, self).__init__()
         with self.init_scope():
             # the size of the inputs to each layer will be inferred
             self.l1 = L.Linear(None, n_units)  # n_in -> n_units
@@ -163,10 +164,12 @@ def main():
     #中断データの有無、あれば続きから
     if args.resume:
         chainer.serializers.load_npz(args.resume, trainer)
-    ##実験開始、trainerにお任せ
+    #実験開始、trainerにお任せ
     trainer.run()
-    model.to_cpu() # CPUで計算できるようにしておく
-    chainer.serializers.save_npz("mymodel.npz", model) # npz形式で書き出し
+    #CPUで計算できるようにしておく
+    model.to_cpu()
+    #npz形式で書き出し
+    chainer.serializers.save_npz(args.out+'/mymodel.npz', model)
 
 
 if __name__ == '__main__':

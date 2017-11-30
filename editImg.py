@@ -1,3 +1,6 @@
+import numpy as np
+xp = np
+
 from PIL import Image
 import math
 import os
@@ -10,6 +13,7 @@ class EditImg:
     back =(0,0,0)
     def __init__(self,charSize):
         self.charSize = charSize
+
     def expCanvas(self,inImg):
         xChar = math.ceil(inImg.size[0]/self.charSize)
         yChar = math.ceil(inImg.size[1]/self.charSize)
@@ -17,17 +21,14 @@ class EditImg:
         xFix = xChar*self.charSize
         yFix = yChar*self.charSize
 
-        size = (xFix,yFix)
-
         xSt = math.floor((xFix-inImg.size[0])/2)
         ySt = math.floor((yFix-inImg.size[1])/2)
 
-        start = (xSt,ySt)
-
-        outImg = Image.new('HSV',size,self.back)
-        outImg.paste(inImg, start)
+        outImg = Image.new('HSV',(xFix,yFix),self.back)
+        outImg.paste(inImg,(xSt,ySt))
 
         return outImg
+
     def writeImg(self,inImg,outDel,fileName,fileX,fileY):
         if(os.path.isdir(outDel)==False):
             os.mkdir(outDel)
@@ -51,11 +52,11 @@ class EditImg:
                 outImg = outImgs[j][i].convert("RGB")
                 outImg.save(outDel+'/'+str(ctr)+'.png')
                 ctr = ctr + 1
-                #outImg.save(outDel+'/'+fileName+'_'+str(i)+'_'+str(j)+'_'+str(fileY).zfill(3)+'_'+str(fileX).zfill(3)+'.png')
+
     def quarryImg(self,inImg,moveLength):
         self.moveLength = int(moveLength)
-        xCh = int(inImg.size[0]/self.charSize)*2-1
-        yCh = int(inImg.size[1]/self.charSize)*2-1
+        xCh = int(inImg.size[0]/self.charSize)*int(self.charSize/self.moveLength)-(int(self.charSize/self.moveLength)-1)
+        yCh = int(inImg.size[1]/self.charSize)*int(self.charSize/self.moveLength)-(int(self.charSize/self.moveLength)-1)
         outImgs = [[0 for i in range(xCh)] for j in range(yCh)]
         for j in range(0, yCh):
                 for i in range(0, xCh):
@@ -64,19 +65,71 @@ class EditImg:
                     outImgs[j][i] = inImg.crop((xSt, ySt, (xSt+self.charSize), (ySt+self.charSize)))
         return outImgs
 
+    def sutureImg(self,inImgs):
+        size = inImgs[0][0].size[0]
+        xFix = size*len(inImgs[0])
+        yFix = size*len(inImgs)
+        outImg = Image.new('HSV',(xFix,yFix),self.back)
+        for y in range(len(inImgs)):
+            for x in range(len(inImgs[0])):
+                outImg.paste(inImgs[y][x],(x*size,y*size))
+        return outImg
+
+    def img2numpy(self,img):
+        imgF = xp.asarray(img, dtype=xp.float32)
+        numpy = []
+        for z in range(0,3):
+            for y in range(0,self.charSize):
+                for x in range(0,self.charSize):
+                        numpy.append(xp.float32(imgF[y][x][z])/255.0)
+        numpy = xp.asarray(numpy,dtype=xp.float32)
+        return numpy
+
+    def numpy2img(self,numpy):
+        size = round(math.sqrt(len(numpy)/3))
+        outImg = Image.new('HSV',(size,size),self.back)
+        for y in range(0,self.charSize):
+            for x in range(0,self.charSize):
+                outImg.putpixel((x, y),(
+                    int(round(numpy[x+y*size]*255)),
+                    int(round(numpy[x+y*size+size*size]*255)),
+                    int(round(numpy[x+y*size+size*size*2]*255))
+                    ))
+        return outImg
+
     def outImg(self,outDel,path):
         img = Image.open(path).convert("HSV")
         img = self.expCanvas(img)
-        imgsqua = self.quarryImg(img,int(self.charSize/2))
-        for y in range(0, len(imgsqua)):
-                for x in range(0, len(imgsqua[0])):
+        imgsQua = self.quarryImg(img,int(self.charSize/2))
+        for y in range(0, len(imgsQua)):
+                for x in range(0, len(imgsQua[0])):
                     fileNames = os.path.basename(path)
                     fileNames = os.path.splitext(fileNames)
                     fileName = fileNames[0][:-2]
-                    self.writeImg(imgsqua[y][x],outDel,fileName,x,y)
+                    self.writeImg(imgsQua[y][x],outDel,fileName,x,y)
+
+    def preTeachImg(self,path):
+        img = Image.open(path).convert("HSV")
+        img = self.expCanvas(img)
+        imgsQua = self.quarryImg(img,int(self.charSize))
+        return imgsQua
 
 """
-edit = EditImg()
-edit.outImg('que','traindata/0000_i.bmp')
+edit = EditImg(32)
+img = Image.open('alldata/0000_i.bmp').convert("HSV")
+img = edit.expCanvas(img)
+imgsqua = edit.quarryImg(img,32)
+imgOut = edit.sutureImg(imgsqua)
+imgOut = imgOut.convert("RGB")
+imgOut.save('alldata/sample_out.png')
+"""
+
+"""
+edit = EditImg(32)
+inImg = Image.open('alldata/sample.png').convert("HSV")
+numpy = edit.img2numpy(inImg)
+image = edit.numpy2img(numpy)
+image = image.convert("RGB")
+image.save('alldata/sample_out.png')
 print('書き出し完了')
 """

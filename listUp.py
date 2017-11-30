@@ -10,10 +10,12 @@ import judgeImg
 class ListUp:
     def __init__(self):
         pass
+
     def resetDir(self,path):
         if(os.path.isdir(path)==True):
             shutil.rmtree(path)
         os.mkdir(path)
+
     def tdList(self,tdPath):
         self.tdPath = tdPath
         allList = [relpath(x, self.tdPath) for x in glob(join(self.tdPath, '*'))]
@@ -32,6 +34,23 @@ class ListUp:
             if(quePath != 'null' and ansPath != 'null'):
                 outList.append((quePath,ansPath))
         return outList
+
+    def inList(self,inPath):
+        inPath
+        allList = [relpath(x, inPath) for x in glob(join(inPath, '*'))]
+        inList = []
+        outList = []
+        ji = judgeImg.JudgeImg()
+        #拡張子を削除
+        for i in range(0, len(allList)):
+            root = os.path.splitext(allList[i])
+            inList.append(root[0])
+        for i in range(0, len(inList)):
+            jPath = ji.judgeImgName(inPath+'/'+inList[i])
+            if(inPath != 'null'):
+                outList.append((jPath,inList[i]))
+        return outList
+
     def splitDeta(self,quePath,ansPath,trainQuePath,trainAnsPath,
                   testQuePath,testAnsPath,testLatio):
         self.resetDir(trainQuePath)
@@ -50,6 +69,7 @@ class ListUp:
             shutil.move(ansPath+'/'+allList[i],trainAnsPath+'/'+str(i-testLength)+'.png')
         os.rmdir(quePath)
         os.rmdir(ansPath)
+
 """
 listUp = ListUp()
 listUp.splitDeta('que','ans','trainQue',
