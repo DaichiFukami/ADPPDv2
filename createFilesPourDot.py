@@ -17,7 +17,7 @@ fileList = listUp.tdList(tdPath)
 listUp.resetDir(quePath)
 listUp.resetDir(ansPath)
 
-edit = editImg.EditImg(charSize)
+edit = editImg.EditImg(charSize,-1)
 print('進行状況:'+str(0)+'/'+str(len(fileList)))
 for i in range(0, len(fileList)):
     edit.outImg(quePath,fileList[i][0])

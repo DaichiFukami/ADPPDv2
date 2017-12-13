@@ -1,4 +1,5 @@
 import numpy as np
+import cupy as cp
 xp = np
 
 from PIL import Image
@@ -11,8 +12,10 @@ class EditImg:
     hs = 3
     #背景色(黒)
     back =(0,0,0)
-    def __init__(self,charSize):
+    def __init__(self,charSize,gpu):
         self.charSize = charSize
+        if(gpu>=0):
+            xp = cp
 
     def expCanvas(self,inImg):
         xChar = math.ceil(inImg.size[0]/self.charSize)
@@ -115,6 +118,8 @@ class EditImg:
         return imgsQua
 
 
+
+"""
 edit = EditImg(32)
 img = Image.open('alldata/0000_i.bmp').convert("HSV")
 img = edit.expCanvas(img)
@@ -122,6 +127,7 @@ imgsqua = edit.quarryImg(img,32)
 imgOut = edit.sutureImg(imgsqua)
 imgOut = imgOut.convert("RGB")
 imgOut.save('alldata/sample_out.png')
+"""
 
 
 """

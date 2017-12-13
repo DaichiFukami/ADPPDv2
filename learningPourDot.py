@@ -61,7 +61,9 @@ class DatasetPourDot(chainer.dataset.DatasetMixin):
         return numpy
 
 class ADPPD(chainer.Chain):
-    def __init__(self, n_units, n_out):
+    def __init__(self):
+        n_units = unitSize
+        n_out = outUnit
         super(ADPPD, self).__init__()
         with self.init_scope():
             # the size of the inputs to each layer will be inferred
